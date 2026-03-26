@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calcolatore Incentivo PdC - HUB SDI</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #111827; 
+      --muted: #6b7280;
+      --border: #e5e7eb; 
+      --hub-violet: #3C364C;
+      --hub-violet-hover: #4e4663;
+      --primary: #3a73d8;
+      --success: #10b981;      
+      --radius: 12px;
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    /* --- HEADER HUB SDI --- */
+    .header {
+      background: var(--hub-violet);
+      color: white;
+      font-family: 'Roboto Condensed', sans-serif;
+      border-radius: var(--radius);
+      padding: 30px;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 30px;
+      display: flex;
+      align-items: center;
+      gap: 25px;
+    }
+
+    .header-content h1 { 
+      margin: 0; 
+      font-size: 2.2rem; 
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .header-content p { 
+      margin: 5px 0 0 0; 
+      opacity: 0.85; 
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.95rem;
+    }
+
+    /* --- CARDS --- */
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      border: 1px solid var(--border);
+      padding: 25px;
+      margin-bottom: 25px;
+    }
+
+    .section-title {
+      margin: 0 0 20px 0;
+      font-size: 1.2rem;
+      color: var(--hub-violet);
+      border-bottom: 2px solid #f1f5f9;
+      padding-bottom: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+
+    .field { display: flex; flex-direction: column; gap: 8px; }
+
+    label { 
+      font-size: 0.75rem; 
+      font-weight: 600; 
+      color: var(--muted); 
+      text-transform: uppercase; 
+    }
+
+    input, select {
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: inherit;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--hub-violet);
+      box-shadow: 0 0 0 3px rgba(60, 54, 76, 0.1);
+    }
+
+    /* --- RISULTATI --- */
+    .result-box {
+      background: #f1f5f9;
+      border-radius: 10px;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+    .res-item { display: flex; flex-direction: column; }
+    .res-label { font-size: 0.7rem; color: var(--muted); font-weight: 700; text-transform: uppercase; }
+    .res-value { font-size: 1.2rem; color: var(--hub-violet); font-weight: 700; }
+    .res-highlight { color: var(--success); font-size: 1.6rem; }
+
+    .footer {
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 20px;
+    }
+
+    @media (max-width: 600px) {
+      .grid { grid-template-columns: 1fr; }
+      .header { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <div class="header">
+      <div class="header-content">
+        <div style="font-weight: 600; letter-spacing: 2px; font-size: 0.8rem; margin-bottom: 5px;">HUB SOCIETÀ DI INGEGNERIA</div>
+        <h1>Incentivo <span style="font-weight: 400;">PdC Aria/Acqua</span></h1>
+        <p>Calcolo Massimo Incentivabile - Regole Applicative D.M. 7 Agosto 2025</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 class="section-title">Parametri Tecnici Pompa di Calore</h2>
+      <div class="grid">
+        <div class="field">
+          <label>Potenza Termica Nominale ($P_{rated}$) [kW]</label>
+          <input type="number" id="potenza" step="0.1" placeholder="Es: 12.5" oninput="calcola()">
+        </div>
+        <div class="field">
+          <label>Coefficiente di Prestazione Stagionale (SCOP)</label>
+          <input type="number" id="scop" step="0.01" placeholder="Es: 4.2" oninput="calcola()">
+        </div>
+        <div class="field">
+          <label>Zona Climatica (DPR 412/93)</label>
+          <select id="zona" onchange="calcola()">
+            <option value="600">Zona A (600h)</option>
+            <option value="850">Zona B (850h)</option>
+            <option value="1100">Zona C (1100h)</option>
+            <option value="1400" selected>Zona D (1400h)</option>
+            <option value="1700">Zona E (1700h)</option>
+            <option value="1800">Zona F (1800h)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Tipologia Applicazione</label>
+          <select id="tipo" onchange="calcola()">
+            <option value="std">Aria/Acqua Standard</option>
+            <option value="bt">Aria/Acqua Bassa Temperatura</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 class="section-title">Analisi Efficienza e Coefficienti</h2>
+      <div class="result-box">
+        <div class="res-item">
+          <span class="res-label">Efficienza Stagionale ($\eta_s$)</span>
+          <span class="res-value" id="out-etas">-</span>
+        </div>
+        <div class="res-item">
+          <span class="res-label">Coefficiente Premialità ($k_p$)</span>
+          <span class="res-value" id="out-kp">-</span>
+        </div>
+        <div class="res-item">
+          <span class="res-label">Coefficiente Valorizzazione ($C_i$)</span>
+          <span class="res-value" id="out-ci">-</span>
+        </div>
+        <div class="res-item">
+          <span class="res-label">Durata Incentivazione</span>
+          <span class="res-value" id="out-anni">-</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="border-left: 5px solid var(--success);">
+      <h2 class="section-title" style="color: var(--success);">Risultato Calcolo Incentivo</h2>
+      <div class="result-box" style="background: #ecfdf5;">
+        <div class="res-item">
+          <span class="res-label">Rata Annuale Stimata</span>
+          <span class="res-value" id="out-annuo">-</span>
+        </div>
+        <div class="res-item">
+          <span class="res-label">Incentivo Totale Massimo</span>
+          <span class="res-value res-highlight" id="out-totale">-</span>
+        </div>
+      </div>
+      <p style="font-size: 0.7rem; color: var(--muted); margin-top: 15px;">
+        * Nota: Il calcolo non include l'eventuale massimale del 65% della spesa sostenuta. 
+        Basato su $\eta_{s,min}$ di 110% (Std) e 125% (BT) come da D.M. 2025.
+      </p>
+    </div>
+
+    <div class="footer">
+      &copy; 2026 HUB SDI - Modulo di calcolo termodinamico avanzato
+    </div>
+
+  </div>
+
+  <script>
+    function calcola() {
+      const Prated = parseFloat(document.getElementById('potenza').value);
+      const SCOP = parseFloat(document.getElementById('scop').value);
+      const Quf = parseInt(document.getElementById('zona').value);
+      const tipo = document.getElementById('tipo').value;
+
+      if (!Prated || !SCOP) return;
+
+      // 1. Calcolo Efficienza Stagionale (Formula Utente)
+      // eta_s = SCOP / 2,5 * 100 - 3
+      const etas = (SCOP / 2.5) * 100 - 3;
+
+      // 2. Determinazione kp (Ecodesign Minimi Tabella 3 Allegato 1)
+      const etas_min = (tipo === 'bt') ? 125 : 110;
+      const kp = etas / etas_min;
+
+      // 3. Determinazione Ci e Anni in base alla taglia (D.M. Art. 11)
+      const Ci = (Prated <= 35) ? 0.150 : 0.060;
+      const anni = (Prated <= 35) ? 2 : 5;
+
+      // 4. Calcolo Energia Termica Incentivata Ei (kWh_t/anno)
+      // Ei = Qu * [1 - 1/SCOP] * kp
+      // Qu = Prated * Quf
+      const Ei = Prated * Quf * (1 - (1 / SCOP)) * kp;
+      
+      const incentivoAnnuo = Ei * Ci;
+      const incentivoTotale = incentivoAnnuo * anni;
+
+      // Aggiornamento Interfaccia
+      document.getElementById('out-etas').innerText = etas.toFixed(2) + '%';
+      document.getElementById('out-kp').innerText = kp.toFixed(3);
+      document.getElementById('out-ci').innerText = Ci.toFixed(3) + ' €/kWht';
+      document.getElementById('out-anni').innerText = anni + ' anni';
+      
+      document.getElementById('out-annuo').innerText = new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(incentivoAnnuo);
+      document.getElementById('out-totale').innerText = new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(incentivoTotale);
+    }
+  </script>
+</body>
+</html>
